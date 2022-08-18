@@ -1,0 +1,10 @@
+{
+  "name": "customer-api",
+  "version": "1.0.0",
+  "description": "A demo application for a customer api",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Manuel Feller",
+  "license": "MIT"
+}
