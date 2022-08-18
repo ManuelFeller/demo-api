@@ -1,0 +1,13 @@
+# output folders
+dist/
+build/
+
+# local environment variables
+.env
+
+# things that are too heavy for git ;)
+# https://www.reddit.com/r/ProgrammerHumor/comments/6s0wov/heaviest_objects_in_the_universe/
+node_modules
+
+# MacOS Metadataa Directory
+.DS_Store
