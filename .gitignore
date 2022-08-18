@@ -11,3 +11,6 @@ node_modules
 
 # MacOS Metadataa Directory
 .DS_Store
+
+# data persistance
+data/datastore.sqlite
