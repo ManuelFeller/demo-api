@@ -6,12 +6,38 @@ export const notesRouter = express.Router();
 
 /**
  * @swagger
- * /v1/notes/byId/ID:
+ * /v1/notes/byId/{id}:
  *   get:
  *     summary: Get a specific note by it's ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: UUID of the note that should be retrieved.
+ *         schema:
+ *           type: string
  *     description:
  *       This endpoint provides the content of one specific note
  *       <strong>Token as Authorization Bearer required</strong>
+ *     responses:
+ *       200:
+ *         description: A single note.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Note'
+ *       404:
+ *         description: Data not found error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Note'
  *     tags:
  *       - customer
  */
@@ -19,7 +45,11 @@ notesRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request,
 	res.setHeader('content-type', 'application/json');
 	try {
 		const result = await DataStore.getInstance().getCustomerNoteByID(req.params['id']);
-		res.status(200).send(JSON.stringify(result[0]));
+		if (result.length === 1) {
+			res.status(200).send(JSON.stringify(result[0]));
+		} else {
+			res.status(404).send(JSON.stringify({status: 404, message: `No note with ID ${req.params['id']} found`}));
+		}
 	}	catch (err) {
 		console.log(err);
 		next(new HttpError(500, new Error('Error when fetching the note: '.concat((err as Error).message))));
@@ -28,12 +58,34 @@ notesRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request,
 
 /**
  * @swagger
-* /v1/notes/byCustomer/ID:
+* /v1/notes/byCustomer/{id}:
  *   get:
  *     summary: Get a list of all notes that belong to a customer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: UUID of the user who's notes should be retrieved.
+ *         schema:
+ *           type: string
  *     description:
  *       This endpoint provides a list of all notes that belong to a customer
  *       <strong>Token as Authorization Bearer required</strong>
+ *     responses:
+ *       200:
+ *         description: A list of notes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Note'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     tags:
  *       - customer
  */
@@ -70,6 +122,27 @@ notesRouter.get("/byCustomer/:id", Authenticator.getTokenCheck(), async (req: Re
  *     description:
  *       This endpoint allows adding a note for a customer. The customer still needs to exist.
  *       <strong>Token as Authorization Bearer required</strong>
+ *     responses:
+ *       200:
+ *         description: An action result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/NoteActionResult'
+ *       400:
+ *         description: Input parameter error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     tags:
  *       - notes
  */
@@ -120,6 +193,27 @@ notesRouter.put("/", Authenticator.getTokenCheck(), async (req: Request, res: Re
  *       This endpoint allows updating a note for a customer. The customer still needs to exist,
  *       and the note must not have changed since it was loaded / requested by the client application
  *       <strong>Token as Authorization Bearer required</strong>
+ *     responses:
+ *       200:
+ *         description: An action result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/NoteActionResult'
+ *       400:
+ *         description: Input parameter error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     tags:
  *       - notes
  */
@@ -172,6 +266,27 @@ notesRouter.patch("/", Authenticator.getTokenCheck(), async (req: Request, res: 
  *       This endpoint allows deleting a note for a customer. The note must not have changed since
  *       it was loaded / requested by the client application; the customer does not need to exist any more
  *       <strong>Token as Authorization Bearer required</strong>
+ *     responses:
+ *       200:
+ *         description: An action result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/NoteActionResult'
+ *       400:
+ *         description: Input parameter error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     tags:
  *       - notes
  */
