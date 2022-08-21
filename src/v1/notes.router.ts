@@ -37,7 +37,7 @@ export const notesRouter = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Note'
+ *               $ref: '#/components/schemas/ErrorError'
  *     tags:
  *       - customer
  */
