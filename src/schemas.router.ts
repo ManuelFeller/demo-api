@@ -1,4 +1,4 @@
-// this is an empty file describing the router's schemas for swagger / open-api in a central location
+// this is an empty file describing the router's / API's schemas for swagger / open-api in a central location
 
 /**
  * @swagger
@@ -140,8 +140,37 @@
  *           description: The notes that are assigned to the user
  *           items:
  *             $ref: '#/components/schemas/Note'
- */
-
-/**
-
+ *     SortDefinition:
+ *       type: object
+ *       properties:
+ *         fieldNames:
+ *           type: array
+ *           description: The list of fields to sort by
+ *           items:
+ *             type: string
+ *             description: The name of a field in the customer data
+ *             example: name
+ *         direction:
+ *           type: string
+ *           description: define the sorting direction - can be ascending ("asc") or descending ("desc")
+ *           example: asc
+ *     FilterDefinition:
+ *       type: object
+ *       properties:
+ *         fieldName:
+ *           type: string
+ *           description: The name of the primary field to filter by.
+ *           example: status
+ *         value:
+ *           type: string
+ *           description: Value that the filter should be checked against. In case of a like search remember to add the % where needed. The % will be filtered on numeric fields ("creation").
+ *           example: asc
+ *         comparison:
+ *           type: string
+ *           description: Defines the method how things get compared. Can be "matches", "like", "greater" or "smaller". On numeric fields ("creation") like gets converted to "match".
+ *           example: matches
+ *         chainType:
+ *           type: string
+ *           description: defines the chaining with previous parameters, can be "and" or "or". Is ignored on first element in the filter list.
+ *           example: and 
  */

@@ -55,11 +55,27 @@ export class DataStore {
 
 	/* ====== Section for getting the customers filtered / sorted ====== */
 
-	async getCustomersFilteredAndSorted(filterBy: string, sortBy: string) {
-		// sort=> fieldname:ASC or field:DESC
-		// filter, exact (AND) => fieldname:value
-		// filter, exact (AND or OR) => AND|OR:fieldname:value
-		// filter, like => fieldname~value
+	async getCustomersFilteredAndSorted(filterBy: any, sortBy: any) {
+		/* 
+		sortBy:
+		{
+			"fieldNames": [
+				"name"
+			],
+			"direction": "asc"
+  	}
+		*/
+		/*
+		filterBy:
+		[
+			{
+				"fieldName": "status",
+				"value": "asc",
+				"comparison": "matches",
+				"chainType": "and"
+			}
+		]
+		*/
 		
 		let filters: string[] = [];
 		if (filterBy.trim() !== '*') {
