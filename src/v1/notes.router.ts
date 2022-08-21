@@ -18,7 +18,6 @@ export const notesRouter = express.Router();
  *           type: string
  *     description:
  *       This endpoint provides the content of one specific note
- *       <strong>Token as Authorization Bearer required</strong>
  *     responses:
  *       200:
  *         description: A single note.
@@ -39,7 +38,7 @@ export const notesRouter = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorError'
  *     tags:
- *       - customer
+ *       - notes
  */
 notesRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
@@ -70,7 +69,6 @@ notesRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request,
  *           type: string
  *     description:
  *       This endpoint provides a list of all notes that belong to a customer
- *       <strong>Token as Authorization Bearer required</strong>
  *     responses:
  *       200:
  *         description: A list of notes.
@@ -87,7 +85,7 @@ notesRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request,
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *     tags:
- *       - customer
+ *       - notes
  */
 notesRouter.get("/byCustomer/:id", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -121,7 +119,6 @@ notesRouter.get("/byCustomer/:id", Authenticator.getTokenCheck(), async (req: Re
  *                 example: This is an example note
  *     description:
  *       This endpoint allows adding a note for a customer. The customer still needs to exist.
- *       <strong>Token as Authorization Bearer required</strong>
  *     responses:
  *       200:
  *         description: An action result
@@ -130,7 +127,7 @@ notesRouter.get("/byCustomer/:id", Authenticator.getTokenCheck(), async (req: Re
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/NoteActionResult'
+ *                 $ref: '#/components/schemas/ActionResult'
  *       400:
  *         description: Input parameter error.
  *         content:
@@ -192,7 +189,6 @@ notesRouter.put("/", Authenticator.getTokenCheck(), async (req: Request, res: Re
  *     description:
  *       This endpoint allows updating a note for a customer. The customer still needs to exist,
  *       and the note must not have changed since it was loaded / requested by the client application
- *       <strong>Token as Authorization Bearer required</strong>
  *     responses:
  *       200:
  *         description: An action result
@@ -201,7 +197,7 @@ notesRouter.put("/", Authenticator.getTokenCheck(), async (req: Request, res: Re
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/NoteActionResult'
+ *                 $ref: '#/components/schemas/ActionResult'
  *       400:
  *         description: Input parameter error.
  *         content:
@@ -265,7 +261,6 @@ notesRouter.patch("/", Authenticator.getTokenCheck(), async (req: Request, res: 
  *     description:
  *       This endpoint allows deleting a note for a customer. The note must not have changed since
  *       it was loaded / requested by the client application; the customer does not need to exist any more
- *       <strong>Token as Authorization Bearer required</strong>
  *     responses:
  *       200:
  *         description: An action result
@@ -274,7 +269,7 @@ notesRouter.patch("/", Authenticator.getTokenCheck(), async (req: Request, res: 
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/NoteActionResult'
+ *                 $ref: '#/components/schemas/ActionResult'
  *       400:
  *         description: Input parameter error.
  *         content:
