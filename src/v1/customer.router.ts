@@ -141,7 +141,7 @@ customerRouter.get("/all", Authenticator.getTokenCheck(), async (req: Request, r
  * @swagger
  * /v1/customer:
  *   patch:
- *     summary: Update teh status of a customer
+ *     summary: Update the status of a customer
   *     requestBody:
  *       required: true
  *       content:
