@@ -1,6 +1,7 @@
 import Knex from 'knex';
 import crypto from 'crypto';
 import { resourceLimits } from 'worker_threads';
+import { StatusConverter } from './statusConverter';
 
 export class DataStore {
 
@@ -29,7 +30,26 @@ export class DataStore {
 
 	async getAllCustomers() {
 		const result = await this.knex('customers').select();
+		result.forEach((customer) => {
+			customer.status = StatusConverter.convertToString(customer.status);
+		});
 		return result;
+	}
+
+	/* ====== Section for setting the customers status ====== */
+
+	async updateCustomerStatus(customerId: string, oldStatus: string, newStatus: string) {
+		const result = await this.knex('customers').update({
+			status: StatusConverter.convertToInteger(newStatus)
+		}).where({
+			id: customerId,
+			status: StatusConverter.convertToInteger(oldStatus)
+		});
+		if (result === 1) {
+			return {id: customerId, status: 'updated'};
+		} else {
+			throw new Error(`Status of customer with ID ${customerId} could not be updated, it may have been updated by another user already`);
+		}
 	}
 
 
@@ -99,6 +119,7 @@ export class DataStore {
 			const customerNotes = await this.knex('customer_notes').select().where({
 				customer: customerId
 			});
+			customerDetails[0].status = StatusConverter.convertToString(customerDetails[0].status);
 			return { ...customerDetails[0], notes: customerNotes}
 		} else {
 			throw new Error(`Customer with ID ${customerId} does not exist`);

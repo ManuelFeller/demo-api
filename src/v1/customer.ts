@@ -137,3 +137,52 @@ customerRouter.get("/all", Authenticator.getTokenCheck(), async (req: Request, r
 	}
 });
 
+/**
+ * @swagger
+ * /v1/customer:
+ *   patch:
+ *     summary: Update teh status of a customer
+  *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 description: The customers's UUID.
+ *                 example: f60d39a4-c1d5-4422-aae6-f54e46e68d56
+ *               oldStatus:
+ *                 type: string -> "prospective" | "current" | "non-active"
+ *                 description: The current status of the customer.
+ *                 example: prospective
+ *               newStatus:
+ *                 type: string -> "prospective" | "current" | "non-active"
+ *                 description: The new status of the customer.
+ *                 example: current
+ *     description:
+ *       This endpoint allows updating the status of a customer. It can be "prospective", "current" or "non-active".
+ *       <strong>Token as Authorization Bearer required</strong>
+ *     tags:
+ *       - notes
+ */
+customerRouter.patch("/", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+	res.setHeader('content-type', 'application/json');
+	console.log(req.body);
+	if (!req.body?.customerId || !req.body?.oldStatus || !req.body?.newStatus) {
+		next(new HttpError(400, new Error('Can not update note, at least one missing parameter')));
+		return;
+	}
+	try {
+		const result = await DataStore.getInstance().updateCustomerStatus(
+			req.body.customerId,
+			req.body.oldStatus,
+			req.body.newStatus
+		);
+		res.status(200).send(JSON.stringify(result));
+	}	catch (err) {
+		console.log(err);
+		next(new HttpError(500, new Error('Error when updating status of customer: '.concat((err as Error).message))));
+	}
+});
