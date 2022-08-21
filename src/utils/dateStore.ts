@@ -1,4 +1,6 @@
 import Knex from 'knex';
+import crypto from 'crypto';
+import { resourceLimits } from 'worker_threads';
 
 export class DataStore {
 
@@ -23,10 +25,15 @@ export class DataStore {
 		return DataStore.instance;
 }
 
+	/* ====== Section for getting all customers ====== */
+
 	async getAllCustomers() {
 		const result = await this.knex('customers').select();
 		return result;
 	}
+
+
+	/* ====== Section for getting the customers filtered / sorted ====== */
 
 	async getCustomersFilteredAndSorted(filterBy: string, sortBy: string) {
 		// sort=> fieldname:ASC or field:DESC
@@ -77,7 +84,114 @@ export class DataStore {
 	// filter for AND and OR and multiple values
 
 
+	/* ====== Section for the notes functionality ====== */
+
+	/**
+	 * Function to load a specific note
+	 * 
+	 * @param noteId The ID of the note that should be loaded
+	 * @returns The note that was loaded from the data store
+	 */
+	async getCustomerNoteByID(noteId: string) {
+		const result = await this.knex('customer_notes').select().where({
+			id: noteId
+		});
+		if (result.length === 1) {
+			return result;
+		} else {
+			throw new Error(`Note with ID ${noteId} does not exist`);
+		}
+	}
+
+	/**
+	 * Function to load a all notes that belong to a customer
+	 * 
+	 * @param customerId The ID of the customer of which all notes should be loaded
+	 * @returns The notes that were loaded from the data store
+	 */
+	 async getCustomerNotesByCustomerID(customerId: string) {
+		const result = await this.knex('customer_notes').select().where({
+			customer: customerId
+		});
+		return result;
+	}
+
+	/**
+	 * Function to add a note to a customer
+	 * 
+	 * @param customerId The ID of the customer where the note belongs to
+	 * @param noteContent The content of the note
+	 * @returns {id: NEW_NOTE_ID, status: 'created'} in case of success
+	 */
+	async addCustomerNote(customerId: string, noteContent: string) {
+		// as there were issues with knex/SQLite when having a foreign key we need to validate the customer ID exists
+		const customerCheck = await this.knex('customers').select().where({id: customerId});
+		if (customerCheck.length === 1) {
+			const noteUUID = crypto.randomUUID();
+			const result = await this.knex('customer_notes').insert({
+				id: noteUUID,
+				customer: customerId,
+				content: noteContent
+			});
+			if (result.length === 1) {
+				return {id: noteUUID, status: 'created'};
+			} else {
+				throw new Error(`Note could not be created`);
+			}
+		} else {
+			throw new Error(`Customer with ID ${customerId} does not exist`);
+		}
+	}
 	
+	/**
+	 * Function to update a note
+	 * 
+	 * @param noteId The ID of the note that should be updated
+	 * @param customerId The ID of the customer where the note belongs to (to make sure the note was not re-assigned and the customer still exists)
+	 * @param oldNoteContent The old note content (to check if there were any changes by another user)
+	 * @param newNoteContent The new content of the note that should be saved
+	 * @returns {id: noteId, status: 'updated'} in case of success
+	 */
+	async updateCustomerNote(noteId: string, customerId: string, oldNoteContent: string, newNoteContent: string) {
+		// as there were issues with knex/SQLite when having a foreign key we need to validate the customer ID still exists
+		const customerCheck = await this.knex('customers').select().where({id: customerId});
+		if (customerCheck.length === 1) {
+			const result = await this.knex('customer_notes').update({
+				content: newNoteContent
+			}).where({
+				id: noteId,
+				customer: customerId,
+				content: oldNoteContent
+			});
+			if (result === 1) {
+				return {id: noteId, status: 'updated'};
+			} else {
+				throw new Error(`Note with ID ${noteId} could not be updated, it may have been updated by another user already`);
+			}
+		} else {
+			throw new Error(`Customer with ID ${customerId} does not exist, note update not possible`);
+		}
+	}
 	
+	/**
+	 * Function to delete a note
+	 * 
+	 * @param noteId The ID of the note that should be deleted
+	 * @param customerId The ID of the customer where the note belongs to (to make sure the note was not re-assigned)
+	 * @param noteContent The old note content (to check if there were any changes by another user)
+	 * @returns {id: noteId, status: 'deleted'} in case of success
+	 */
+	async deleteCustomerNote(noteId: string, customerId: string, noteContent: string) {
+		const result = await this.knex('customer_notes').delete().where({
+			id: noteId,
+			customer: customerId,
+			content: noteContent
+		});
+		if (result === 1) {
+			return {id: noteId, status: 'deleted'};
+		} else {
+			throw new Error(`Note with ID ${noteId} could not be deleted, it may have been updated or deleted by another user`);
+		}
+	}
 	
 }
