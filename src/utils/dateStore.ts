@@ -83,6 +83,27 @@ export class DataStore {
 
 	// filter for AND and OR and multiple values
 
+	/* ====== Section for the customer and all notes functionality ====== */
+
+	/**
+	 * Function to load a customer including all assigned notes
+	 * 
+	 * @param customerId The ID of the customer that should be loaded
+	 * @returns The customer object with an additional notes array (that may be empty)
+	 */
+	async getAllCustomerData(customerId: string) {
+		const customerDetails = await this.knex('customers').select().where({
+			id: customerId
+		});
+		if (customerDetails.length === 1) {
+			const customerNotes = await this.knex('customer_notes').select().where({
+				customer: customerId
+			});
+			return { ...customerDetails[0], notes: customerNotes}
+		} else {
+			throw new Error(`Customer with ID ${customerId} does not exist`);
+		}
+	}
 
 	/* ====== Section for the notes functionality ====== */
 

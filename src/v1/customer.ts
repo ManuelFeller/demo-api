@@ -15,7 +15,7 @@ export const customerRouter = express.Router();
  *     tags:
  *       - customer
  */
-customerRouter.get("/filterby/:filter/sortby/:sort", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/filterBy/:filter/sortBy/:sort", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
 	try {
 		const customerList = await DataStore.getInstance().getCustomersFilteredAndSorted(req.params['filter'], req.params['sort']);
@@ -24,7 +24,7 @@ customerRouter.get("/filterby/:filter/sortby/:sort", Authenticator.getTokenCheck
 		console.log(err);
 		next(new HttpError(500, new Error('Error when accessing the Data Store: '.concat((err as Error).message))));
 	}
-})
+});
 
 /**
  * @swagger
@@ -37,7 +37,7 @@ customerRouter.get("/filterby/:filter/sortby/:sort", Authenticator.getTokenCheck
  *     tags:
  *       - customer
  */
-customerRouter.get("/sortby/:sort/filterby/:filter", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/sortBy/:sort/filterBy/:filter", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
 	try {
 		const customerList = await DataStore.getInstance().getCustomersFilteredAndSorted(req.params['filter'], req.params['sort']);
@@ -46,7 +46,7 @@ customerRouter.get("/sortby/:sort/filterby/:filter", Authenticator.getTokenCheck
 		console.log(err);
 		next(new HttpError(500, new Error('Error when accessing the Data Store '.concat((err as Error).message))));
 	}
-})
+});
 
 /**
  * @swagger
@@ -59,7 +59,7 @@ customerRouter.get("/sortby/:sort/filterby/:filter", Authenticator.getTokenCheck
  *     tags:
  *       - customer
  */
-customerRouter.get("/filterby/:filter", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/filterBy/:filter", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
 	try {
 		const customerList = await DataStore.getInstance().getCustomersFilteredAndSorted(req.params['filter'], '*');
@@ -68,7 +68,7 @@ customerRouter.get("/filterby/:filter", Authenticator.getTokenCheck(), async (re
 		console.log(err);
 		next(new HttpError(500, new Error('Error when accessing the Data Store '.concat((err as Error).message))));
 	}
-})
+});
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ customerRouter.get("/filterby/:filter", Authenticator.getTokenCheck(), async (re
  *     tags:
  *       - customer
  */
-customerRouter.get("/sortby/:sort", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/sortBy/:sort", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
 	try {
 		const customerList = await DataStore.getInstance().getCustomersFilteredAndSorted('*', req.params['sort']);
@@ -90,12 +90,30 @@ customerRouter.get("/sortby/:sort", Authenticator.getTokenCheck(), async (req: R
 		console.log(err);
 		next(new HttpError(500, new Error('Error when accessing the Data Store '.concat((err as Error).message))));
 	}
-})
+});
 
 
-
-
-
+/**
+ * @swagger
+ * /v1/customer/byId/ID:
+ *   get:
+ *     summary: Get all details of a customer
+ *     description:
+ *       This endpoint provides all details of a customer, including all notes that are assigned
+ *       <strong>Token as Authorization Bearer required</strong>
+ *     tags:
+ *       - customer
+ */
+customerRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+	res.setHeader('content-type', 'application/json');
+	try {
+		const customerList = await DataStore.getInstance().getAllCustomerData(req.params['id']);
+		res.status(200).send(JSON.stringify(customerList));	
+	} catch (err) {
+		console.log(err);
+		next(new HttpError(500, new Error('Error when accessing the Data Store')));
+	}
+});
 
 /**
  * @swagger
