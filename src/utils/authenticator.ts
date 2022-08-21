@@ -31,7 +31,6 @@ export class Authenticator {
 	 */
 	private static doTokenCheck = () => {
     return async (req: any, res: any, next: any) => {
-			console.log(req.headers);
       res.setHeader('content-type', 'application/json');
       if (!('authorization' in req.headers)) {
         console.error('AUTHORIZATION CHECK: Cannot check token as it was not submitted...');
