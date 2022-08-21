@@ -138,10 +138,10 @@ export class DataStore {
 		const result = await this.knex('customer_notes').select().where({
 			id: noteId
 		});
-		if (result.length === 1) {
+		if (result.length <= 1) {
 			return result;
 		} else {
-			throw new Error(`Note with ID ${noteId} does not exist`);
+			throw new Error(`More then one note matches ID, something went seriously wrong`);
 		}
 	}
 
