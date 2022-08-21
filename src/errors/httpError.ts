@@ -1,7 +1,16 @@
 import { ErrorLike } from "../types/errorLike";
 
+/**
+ * Basic HTTP-Error class for the API server
+ */
 export class HttpError extends Error {
+  /**
+   * HTTP Status Code
+   */
   readonly status: number;
+  /**
+   * The inner error
+   */
   readonly inner: ErrorLike;
 
   constructor(status: number, error: ErrorLike) {
