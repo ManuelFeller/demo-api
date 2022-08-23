@@ -80,6 +80,14 @@ async function setup() {
 		}
 	]);
 
+	await knex('customer_notes').insert(
+		{
+			id: "8048fe15-f207-438d-ad6b-c9283ab11f9a",
+			customer: 'f60d39a4-c1d5-4422-aae6-f54e46e68d56',
+			content: "The Matrix Cannot Tell You Who You Are."
+		}
+	);
+
 	process.exit()
 }
 
