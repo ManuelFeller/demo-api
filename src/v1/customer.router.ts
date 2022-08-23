@@ -111,7 +111,7 @@ customerRouter.get("/byId/:id", Authenticator.getTokenCheck(), async (req: Reque
  *     tags:
  *       - customer
  */
-customerRouter.get("/all", Authenticator.getTokenCheck(), async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/all", Authenticator.getTokenCheck(), async (_req: Request, res: Response, next: NextFunction) => {
 	res.setHeader('content-type', 'application/json');
 	try {
 		const customerList = await DataStore.getInstance().getAllCustomers();
