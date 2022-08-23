@@ -25,6 +25,27 @@ export const customerRouter = express.Router();
  *                 $ref: '#/components/schemas/SortDefinition'
  *     description:
  *       This endpoint provides a filtered and sorted list of all customers that are in the database
+ *     responses:
+ *       200:
+ *         description: The list of customers.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Customer'
+ *       400:
+ *         description: Input parameter error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server side error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     tags:
  *       - customer
  */
