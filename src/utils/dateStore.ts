@@ -204,10 +204,10 @@ export class DataStore {
 		const result = await this.knex('customer_notes').select().where({
 			id: noteId
 		});
-		if (result.length <= 1) {
-			return result;
+		if (result.length === 1) {
+			return result[0];
 		} else {
-			throw new Error(`More then one note matches ID, something went seriously wrong`);
+			throw new Error(`None or more then one note matches ID`);
 		}
 	}
 
