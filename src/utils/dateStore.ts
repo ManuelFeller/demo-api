@@ -2,6 +2,7 @@ import Knex from 'knex';
 import crypto from 'crypto';
 import { resourceLimits } from 'worker_threads';
 import { StatusConverter } from './statusConverter';
+import { stringify } from 'querystring';
 
 export class DataStore {
 
@@ -55,69 +56,122 @@ export class DataStore {
 
 	/* ====== Section for getting the customers filtered / sorted ====== */
 
-	async getCustomersFilteredAndSorted(filterBy: any, sortBy: any) {
-		/* 
-		sortBy:
-		{
-			"fieldNames": [
-				"name"
-			],
-			"direction": "asc"
-  	}
-		*/
-		/*
-		filterBy:
-		[
-			{
-				"fieldName": "status",
-				"value": "asc",
-				"comparison": "matches",
-				"chainType": "and"
-			}
-		]
-		*/
-		
-		let filters: string[] = [];
-		if (filterBy.trim() !== '*') {
-			filters = filterBy.split(',')
-		}
-
-
+	async getCustomersFilteredAndSorted(filterBy: any[], sortBy: any) {
+		const convertedSortCriteria = this.checkAndConvertSortObjects(sortBy);
+		// ToDo: test if no filters still work
 		const result = await this.knex('customers').select().where((builder) => {
-			const counters = {
-				where: 0,
-				whereLike: 0
-			};
-			for (let filter of filters) {
-				this.addWhereCondition(builder, filter, counters);
+			let isFirstClause = true;
+			for (let filter of filterBy) {
+				// check for errors in the filter object; will exit with error in case it is not valid
+				this.checkIfFilterObjectIsValid(filter, isFirstClause);
+				// add the filter to the query
+				this.addWhereCondition(builder, filter, isFirstClause);
+				isFirstClause = false;
 			}
-		});
+		}).orderBy(convertedSortCriteria);
 		return result;
 
 	}
 
-	private addWhereCondition(builder: any, filter: string, counters: {where: number, whereLike: number}) {
-		// exact match (only if we have at least on char before and after the split character)
-		if (filter.indexOf(':') > 0 && filter.indexOf(':') < filter.length -1) {
-			const tempCondition = filter.split(':');
-			if (tempCondition.length === 3) {
-				// AND / OR included
-			} else {
-				// no filter type, assuming OR
+	private addWhereCondition(builder: any, filter: any, isFirstClause: boolean) {
+		if (isFirstClause) {
+			// first clause
+			switch (filter.comparison) {
+				case 'matches':
+					builder.where(filter.fieldName, filter.value);
+					break;
+				case 'like':
+					builder.whereLike(filter.fieldName, filter.value);
+					break;
+				case 'greater':
+					builder.where(filter.fieldName, '>', filter.value);
+					break;
+				case 'smaller':
+					builder.where(filter.fieldName, '<', filter.value);
+					break;
 			}
-			//builder.where()
-		}
-		// like match (only if we have at least on char before and after the split character)
-		else if (filter.indexOf('~') > 0 && filter.indexOf('~') < filter.length -1) {
-			const tempCondition = filter.split('~');
-			//
 		} else {
-			// invalid term, throw error
-			throw new Error(`The term ${filter} is not a valid filter expression`)
+			// following clauses (can be 'or' or 'and')
+			if (filter.chainType === 'and') {
+				switch (filter.comparison) {
+					case 'matches':
+						builder.andWhere(filter.fieldName, filter.value);
+						break;
+					case 'like':
+						builder.andWhereLike(filter.fieldName, filter.value);
+						break;
+					case 'greater':
+						builder.andWhere(filter.fieldName, '>', filter.value);
+						break;
+					case 'smaller':
+						builder.andWhere(filter.fieldName, '<', filter.value);
+						break;
+				}
+			} else {
+				// due to the check we already performed it can only be 'or'
+				switch (filter.comparison) {
+					case 'matches':
+						builder.orWhere(filter.fieldName, filter.value);
+						break;
+					case 'like':
+						builder.orWhereLike(filter.fieldName, filter.value);
+						break;
+					case 'greater':
+						builder.orWhere(filter.fieldName, '>', filter.value);
+						break;
+					case 'smaller':
+						builder.orWhere(filter.fieldName, '<', filter.value);
+						break;
+				}
+			}
 		}
 	}
 
-	// filter for AND and OR and multiple values
+	private checkIfFilterObjectIsValid(filter: any, ignoreChainType: boolean = false) {
+		// check if all properties are set
+		if (
+			filter.value === undefined ||
+			filter.fieldName === undefined ||
+			filter.comparison === undefined ||
+			filter.chainType === undefined
+		) {
+			throw new Error(`Filter object misses at least one property`);
+		}
+		// check comparison type
+		if (
+			filter.comparison !== 'matches' &&
+			filter.comparison !== 'like' &&
+			filter.comparison !== 'greater' &&
+			filter.comparison !== 'smaller'
+		) {
+			throw new Error(`Filter comparison type is unknown`);
+		}
+		// check chaining (if not marked as ignored - for the first condition)
+		if (
+			filter.chainType !== 'and' &&
+			filter.chainType !== 'or' &&
+			!ignoreChainType
+		) {
+			throw new Error(`Filter chainType value is unknown`);
+		}
+	}
+
+	private checkAndConvertSortObjects(sortBy: any[]) {
+		const result: {column: string, order: 'asc' | 'desc'}[] = [];
+		sortBy.forEach((sortItem) => {
+			if (sortItem.fieldName === undefined || sortItem.direction === undefined) {
+				throw new Error(`Sort object misses at least one property`);
+			}
+			if (sortItem.direction === 'asc') {
+				result.push({ column: sortItem.fieldName, order: 'asc'});
+			} else if (sortItem.direction === 'desc') {
+				result.push({ column: sortItem.fieldName, order: 'desc'});
+			} else {
+				throw new Error(`Sort object has invalid sorting direction`);
+			}
+		})
+		return result;
+	}
 
 	/* ====== Section for the customer and all notes functionality ====== */
 
