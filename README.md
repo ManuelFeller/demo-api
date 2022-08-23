@@ -38,6 +38,7 @@ Follow these steps to prepare the API server for running it locally:
 - navigate to a directory where you want to create the project-folder in
 - run `git clone https://github.com/ManuelFeller/demo-api.git` to clone the solution into a sub-directory called `demo-api`
 - change into the `demo-api` directory
+- execute `npm install` to load the used packages
 - execute `npm run setup` to initialize the data store (create file, tables and seed data)
 - copy the file `.env.template` to `.env` (you can to changes in there - but at your own risk)
 
