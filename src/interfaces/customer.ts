@@ -1,4 +1,5 @@
 import { CustomerStatus } from "../enums/customerStatus";
+import { CustomerNote } from "./customerNote";
 
 export interface Customer {
 	id: string,
@@ -10,6 +11,7 @@ export interface Customer {
 	mobile: string,
 	address: string,
 	city: string,
-	zipCode: string,
-	country: string
+	zip_ode: string,
+	country: string,
+	notes?: CustomerNote[]
 }
