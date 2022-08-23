@@ -141,19 +141,19 @@
  *           items:
  *             $ref: '#/components/schemas/Note'
  *     SortDefinition:
- *       type: object
- *       properties:
- *         fieldNames:
- *           type: array
- *           description: The list of fields to sort by
- *           items:
+ *       type: array
+ *       description: The list of sorting definitions
+ *       items:
+ *         type: object
+ *         properties:
+ *           fieldName:
  *             type: string
  *             description: The name of a field in the customer data
  *             example: name
- *         direction:
- *           type: string
- *           description: define the sorting direction - can be ascending ("asc") or descending ("desc")
- *           example: asc
+ *           direction:
+ *             type: string
+ *             description: define the sorting direction - can be ascending ("asc") or descending ("desc")
+ *             example: asc
  *     FilterDefinition:
  *       type: object
  *       properties:
