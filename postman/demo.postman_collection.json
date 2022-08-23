@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "23beddd5-9643-4542-890a-aa0104cf0af3",
+		"name": "Demo API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "all customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3210/v1/customer/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"customer",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "customers filtered and sorted",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterBy\": [\n        {\n            \"fieldName\": \"name\",\n            \"value\": \"Tony%\",\n            \"comparison\": \"like\",\n            \"chainType\": \"and\"\n        },\n        {\n            \"fieldName\": \"name\",\n            \"value\": \"%Duck\",\n            \"comparison\": \"like\",\n            \"chainType\": \"or\"\n        }\n    ],\n    \"sortBy\":\n    [\n        {\n            \"fieldName\": \"name\",\n            \"direction\": \"asc\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3210/v1/customer/subset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"customer",
+						"subset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Testquery",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3210/test/[field:value,AND:field:value]",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"test",
+						"[field:value,AND:field:value]"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add note",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"f60d39a4-c1d5-4422-aae6-f54e46e68d56\",\n    \"noteContent\": \"This is a test note\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3210/v1/notes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"notes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update note",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"f60d39a4-c1d5-4422-aae6-f54e46e68d56\",\n    \"noteId\": \"ba6d358b-b113-4445-8719-7c5f9d55429c\",\n    \"oldNoteContent\": \"This is a test note\",\n    \"newNoteContent\": \"This is an updated test note\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3210/v1/notes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"notes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete note",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"f60d39a4-c1d5-4422-aae6-f54e46e68d56\",\n    \"noteId\": \"ba6d358b-b113-4445-8719-7c5f9d55429c\",\n    \"noteContent\": \"This is an updated test note\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3210/v1/notes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"notes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get note by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3210/v1/notes/byId/5368ec7e-e0a5-4685-b309-3e91e7d657fa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"notes",
+						"byId",
+						"5368ec7e-e0a5-4685-b309-3e91e7d657fa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get notes for customer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3210/v1/notes/byCustomer/f60d39a4-c1d5-4422-aae6-f54e46e68d56",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"notes",
+						"byCustomer",
+						"f60d39a4-c1d5-4422-aae6-f54e46e68d56"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all customer details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3210/v1/customer/byId/f60d39a4-c1d5-4422-aae6-f54e46e68d56",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"customer",
+						"byId",
+						"f60d39a4-c1d5-4422-aae6-f54e46e68d56"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update customer status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"f60d39a4-c1d5-4422-aae6-f54e46e68d56\",\n    \"oldStatus\": \"prospective\",\n    \"newStatus\": \"current\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3210/v1/customer/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3210",
+					"path": [
+						"v1",
+						"customer",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "01234567890",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
