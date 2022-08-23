@@ -4,7 +4,7 @@ import { StatusConverter } from './statusConverter';
 
 export class DataStore {
 
-	private static instance: DataStore;
+	private static instance: DataStore | undefined;
 
 	private knex;
 
@@ -51,12 +51,10 @@ export class DataStore {
 		}
 	}
 
-
 	/* ====== Section for getting the customers filtered / sorted ====== */
 
 	async getCustomersFilteredAndSorted(filterBy: any[], sortBy: any) {
 		const convertedSortCriteria = this.checkAndConvertSortObjects(sortBy);
-		// ToDo: test if no filters still work
 		const result = await this.knex('customers').select().where((builder) => {
 			let isFirstClause = true;
 			for (let filter of filterBy) {
@@ -131,7 +129,7 @@ export class DataStore {
 			filter.value === undefined ||
 			filter.fieldName === undefined ||
 			filter.comparison === undefined ||
-			filter.chainType === undefined
+			(filter.chainType === undefined && !ignoreChainType)
 		) {
 			throw new Error(`Filter object misses at least one property`);
 		}
@@ -302,6 +300,14 @@ export class DataStore {
 		} else {
 			throw new Error(`Note with ID ${noteId} could not be deleted, it may have been updated or deleted by another user`);
 		}
+	}
+
+	/**
+	 * Internal function to allow proper exit of knex in unit tests
+	 */
+	async closeConnection() {
+		await this.knex.destroy();
+		DataStore.instance = undefined;
 	}
 	
 }
