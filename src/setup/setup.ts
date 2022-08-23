@@ -42,7 +42,7 @@ async function setup() {
 		{
 			id: 'f60d39a4-c1d5-4422-aae6-f54e46e68d56',
 			status: 1,
-			creation: new Date(),
+			creation: 1661269335263,
 			name: 'Trinity',
 			email: 'trinity@zion.matrix',
 			landline: '',
@@ -55,7 +55,7 @@ async function setup() {
 		{
 			id: '0fff8afc-8df4-4161-833c-877240c7b187',
 			status: 2,
-			creation: new Date(),
+			creation: 1661269335273,
 			name: 'Tony Stark',
 			email: 'ironman@avangers.marvel',
 			landline: '+1555123',
@@ -68,7 +68,7 @@ async function setup() {
 		{
 			id: '3738f9f2-7c4e-44b9-82a3-a6ebe88be3c8',
 			status: 3,
-			creation: new Date(),
+			creation: 1661269335283,
 			name: 'Scrooge McDuck',
 			email: 'scrooge@moneybin.db',
 			landline: '',
