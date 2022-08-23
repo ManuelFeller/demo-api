@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "all customers",
+			"name": "Get all customers",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -27,7 +27,7 @@
 			"response": []
 		},
 		{
-			"name": "customers filtered and sorted",
+			"name": "Get customers filtered and sorted",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -51,26 +51,6 @@
 						"v1",
 						"customer",
 						"subset"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Testquery",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3210/test/[field:value,AND:field:value]",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3210",
-					"path": [
-						"test",
-						"[field:value,AND:field:value]"
 					]
 				}
 			},
