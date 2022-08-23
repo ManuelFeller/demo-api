@@ -23,7 +23,7 @@ The filtering and sorting requirements were not defined in detail, so I assumed 
 
 ### Prerequisites
 
-You need the following things installed on the machine you want to run this:
+You need the following things installed on the machine you want to run this on:
 
 - [nodeJS](https://nodejs.org/en/) in the latest LTS (>= 16.16.0)
 - [Postman](https://www.postman.com/) (or any compatible application that can read the file format - like the VS Code plugin [Thunder Client](https://www.thunderclient.com/)) to utilize the collection of demo api calls
@@ -32,7 +32,7 @@ You need the following things installed on the machine you want to run this:
 
 ### Local installation
 
-Follow these steps to prepare the API server for local execution
+Follow these steps to prepare the API server for running it locally:
 
 - open a terminal
 - navigate to a directory where you want to create the project-folder in
@@ -43,14 +43,14 @@ Follow these steps to prepare the API server for local execution
 
 ## Run the solution
 
-**Important:** The units tests (`npm run test`) currently run against the seed data. So if you already altered data they are expected to fail. Having a proper testing environment is something that I skipped for for the sake of getting the solution out faster. If you want to play first and then run the tests backup the `data/datastore.sqlite` file that is generated during `npm run setup` and run exactly that script again before running the unit tests.
+**Important:** The units tests (`npm run test`) currently run against the seed data. So if you already altered data they are expected to fail. Having a proper testing environment is something that I skipped as this is not really a solution I plan to use anywhere. If you want to play first and then run the tests backup the `data/datastore.sqlite` file that is generated during `npm run setup` and run exactly that script again before running the unit tests.
 
 - Open a terminal and change into the directory that you cloned / installed the application into
 - execute `npm run serve` to transpile and run the api server
-- open [http://localhost:3210/](http://localhost:3210/) to see that the server answers (a link to the OpenAPI / Swagger documentation is included there)
+- open [http://localhost:3210/](http://localhost:3210/) to see that the server answers (a link to the OpenAPI / Swagger documentation is included there as long as you have not deactivated that in the `.env` file)
 - open the file in `postman/demo.postman_collection.json` in Postman (or your alternative) to play around with the API and send some requests
 
-The API uses a hardcodes `Bearer` token - it is already set in the Postman collection. If you want to try with your own client please use `01234567890`. You can change that token in the file `src/utils/authenticator.ts`.
+The API uses a hardcoded `Bearer` token - it is already set in the Postman collection. If you want to try with your own client please use `01234567890`. You can change that token in the file `src/utils/authenticator.ts`.
 
 Once you are done you can shut down the server by pressing `Control+C`.  
 Also, if you have run `npm run serve` once the application is transpiled and a simple `npm run start` can be used to run the app the `n`th time.
@@ -75,9 +75,9 @@ Another time-eater was the fact that data seeding did not work any more when add
 - add some proper authentication (and not just compare the `Bearer` with a hardcoded dummy token), e.g. self-generated JWT's or SaaS like Auth0
 - add more checks to have more detailed errors returned to the client & more advanced error handling
 - have some rate limiting (needed for sure in case of a public API but also recommended for intranet API's)
-- define limit of required filter complexity with customer, also define if any nesting of and / or is required and implement if needed
+- define limit of required filter complexity with customer, also define if any nesting of and / or is required and implement if needed (to allow limiting the filter API to real use cases e.g by maximum allowed filter elements - to reduce the risk of an accidental DOS from a bad written client application)
 - abstract names of objects to not match the data store objects directly (do avoid guesses how the database fields are named, making any SQL injection attack harder)
-- use a better data store then SQLite when this is not just a demo any more & use a proper `docker compose` setup to have one container running the server and another running the database
+- use a better data store then SQLite when this is not just a demo any more & use a proper `docker compose` setup to have one container running the server and another running the database (or any other method that suits the chosen environment for running the API server)
 - make the status endpoint not just a static reply but check if the DB is up (if the above point is implemented)
 - connect to a proper logging / tracing solution instead of `console.log()` (DataDog, New Relic, ...)
 
