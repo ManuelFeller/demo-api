@@ -3,26 +3,41 @@ import bodyParser from 'body-parser';
 import { HttpError } from './errors/httpError';
 import { customerRouter } from './v1/customer.router';
 import { notesRouter } from './v1/notes.router';
+import { Configurator } from './config/configurator';
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import cors, { CorsOptions } from 'cors';
+import helmet from 'helmet';
 
-
-const SERVER_PORT = 3210;
-const PUBLISH_SWAGGER = true;
-
-
+const config = Configurator.instance;
 const app = express();
 const v1Router = express.Router();
 
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) { // no origin submitted, let it pass
+      callback(null, true);
+    } else { // origin present, so we check it
+      const originIndex = config.clientOrigins.indexOf(origin);
+      if (originIndex !== -1) {
+        callback(null, config.clientOrigins[originIndex]);
+      } else {
+        console.error(`CORS: Origin '${origin}' not in the array of whitelisted origins`)
+        callback(new Error(`CORS: The used origin not allowed...`));
+      }
+    }
+  }
+}
+
+app.use(helmet());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.use("/v1", v1Router);
 v1Router.use("/customer", customerRouter);
 v1Router.use("/notes", notesRouter);
 
-
-
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
 	res.send('The server is serving...');
 });
 
@@ -32,7 +47,7 @@ app.get('/test/:filter', (request: Request, res: Response) => {
 });
 
 // handle undefined routes & errors that occurred / were raised
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.log(err);
 	let statusCode = 500;
 	if ('status' in err) {
@@ -49,7 +64,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // swagger API documentation
 
-if (PUBLISH_SWAGGER) {
+if (config.publishSwagger) {
   const openApiOptions = {
     definition: {
       openapi: "3.0.0",
@@ -66,7 +81,7 @@ if (PUBLISH_SWAGGER) {
       },
       servers: [
         {
-          url: `http://localhost:${SERVER_PORT}`,
+          url: `http://localhost:${config.serverPort}`,
         },
       ],
 			components: {
@@ -97,4 +112,4 @@ if (PUBLISH_SWAGGER) {
 
 // start listening
 
-app.listen(3210, () => console.log(`Server listening at ${SERVER_PORT}...`))
+app.listen(config.serverPort, () => console.log(`API Server: Server listening at port ${config.serverPort}...`))
